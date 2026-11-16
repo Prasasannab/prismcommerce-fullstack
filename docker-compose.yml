@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: prismcommerce-postgres
+    environment:
+      POSTGRES_DB: prismcommerce_db
+      POSTGRES_USER: prismuser
+      POSTGRES_PASSWORD: prismpassword123!
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prismuser -d prismcommerce_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: prismcommerce-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: prismcommerce-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=prismcommerce_db;Username=prismuser;Password=prismpassword123!
+      - ConnectionStrings__Redis=redis:6379
+      - JwtSettings__SecretKey=PrismCommerce_SuperSecretKey_2026_HighSecurityKeyForJwtTokens!#
+      - JwtSettings__Issuer=PrismCommerce
+      - JwtSettings__Audience=PrismCommerceClient
+      - JwtSettings__ExpiryMinutes=60
+      - StripeSettings__PublishableKey=pk_test_51PrismCommerceTestKey001
+      - StripeSettings__SecretKey=sk_test_51PrismCommerceTestKey001MockSecretForDevTesting
+      - StripeSettings__WebhookSecret=whsec_prismcommerce_test_webhook_secret_key_12345
+    ports:
+      - "5202:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

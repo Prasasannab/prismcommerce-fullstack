@@ -1,0 +1,44 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# .NET / C#
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.idea/
+*.suo
+*.userprefs
+appsettings.*.local.json
+.dotnet/
+.local/
+Library/
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+android/app/build/
+ios/Pods/
+.symlinks/
+
+# Docker
+postgres_data/
+redis_data/
+
+# Environment / Secrets
+*.env
+*.pem
+
+# ASP.NET DataProtection
+**/.aspnet/

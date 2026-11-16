@@ -1,0 +1,6 @@
+@PrismCommerce.Api_HostAddress = http://localhost:5202
+
+GET {{PrismCommerce.Api_HostAddress}}/health/
+Accept: application/json
+
+###
